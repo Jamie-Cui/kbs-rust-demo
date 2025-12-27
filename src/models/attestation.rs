@@ -227,9 +227,35 @@ pub struct QuoteVerificationCollateral {
     pub tcbinfohash: Option<String>,
 }
 
-/// Verifier nonce from Intel Trust Authority.
+/// Verifier nonce from Intel Trust Authority (internal representation).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VerifierNonce {
+    /// Nonce value (base64 encoded)
+    pub val: String,
+
+    /// Issued at timestamp (base64 encoded)
+    pub iat: String,
+
+    /// Signature (base64 encoded)
+    pub signature: String,
+}
+
+/// Verifier nonce for API requests.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VerifierNonceRequest {
+    /// Nonce value (base64 encoded)
+    pub val: String,
+
+    /// Issued at timestamp (base64 encoded)
+    pub iat: String,
+
+    /// Signature (base64 encoded)
+    pub signature: String,
+}
+
+/// Verifier nonce data in API response.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VerifierNonceData {
     /// Nonce value (base64 encoded)
     pub val: String,
 

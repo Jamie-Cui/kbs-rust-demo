@@ -190,87 +190,97 @@ impl Configuration {
         config = config
             .set_override(
                 "service_port",
-                std::env::var("SERVICE_PORT").ok().or_else(|| {
-                    std::env::var("SERVICE.PORT").ok()
-                }),
+                std::env::var("SERVICE_PORT")
+                    .ok()
+                    .or_else(|| std::env::var("SERVICE.PORT").ok()),
             )?
             .set_override(
                 "log_level",
-                std::env::var("LOG_LEVEL").ok().or_else(|| {
-                    std::env::var("LOG.LEVEL").ok()
-                }),
+                std::env::var("LOG_LEVEL")
+                    .ok()
+                    .or_else(|| std::env::var("LOG.LEVEL").ok()),
             )?
             .set_override(
                 "log_caller",
-                std::env::var("LOG_CALLER").ok().or_else(|| {
-                    std::env::var("LOG.CALLER").ok()
-                }),
+                std::env::var("LOG_CALLER")
+                    .ok()
+                    .or_else(|| std::env::var("LOG.CALLER").ok()),
             )?
             .set_override(
                 "trustauthority_base_url",
-                std::env::var("TRUSTAUTHORITY_BASE_URL").ok()
+                std::env::var("TRUSTAUTHORITY_BASE_URL")
+                    .ok()
                     .or_else(|| std::env::var("TRUSTAUTHORITY.BASE.URL").ok()),
             )?
             .set_override(
                 "trustauthority_api_url",
-                std::env::var("TRUSTAUTHORITY_API_URL").ok()
+                std::env::var("TRUSTAUTHORITY_API_URL")
+                    .ok()
                     .or_else(|| std::env::var("TRUSTAUTHORITY.API.URL").ok()),
             )?
             .set_override(
                 "trustauthority_api_key",
-                std::env::var("TRUSTAUTHORITY_API_KEY").ok()
+                std::env::var("TRUSTAUTHORITY_API_KEY")
+                    .ok()
                     .or_else(|| std::env::var("TRUSTAUTHORITY.API.KEY").ok()),
             )?
             .set_override(
                 "key_manager",
-                std::env::var("KEY_MANAGER").ok().or_else(|| {
-                    std::env::var("KEY.MANAGER").ok()
-                }),
+                std::env::var("KEY_MANAGER")
+                    .ok()
+                    .or_else(|| std::env::var("KEY.MANAGER").ok()),
             )?
             .set_override(
                 "admin_username",
-                std::env::var("ADMIN_USERNAME").ok()
+                std::env::var("ADMIN_USERNAME")
+                    .ok()
                     .or_else(|| std::env::var("ADMIN.USERNAME").ok()),
             )?
             .set_override(
                 "admin_password",
-                std::env::var("ADMIN_PASSWORD").ok()
+                std::env::var("ADMIN_PASSWORD")
+                    .ok()
                     .or_else(|| std::env::var("ADMIN.PASSWORD").ok()),
             )?
             .set_override(
                 "san_list",
-                std::env::var("SAN_LIST").ok().or_else(|| {
-                    std::env::var("SAN.LIST").ok()
-                }),
+                std::env::var("SAN_LIST")
+                    .ok()
+                    .or_else(|| std::env::var("SAN.LIST").ok()),
             )?
             .set_override(
                 "bearer_token_validity_in_minutes",
-                std::env::var("BEARER_TOKEN_VALIDITY_IN_MINUTES").ok()
+                std::env::var("BEARER_TOKEN_VALIDITY_IN_MINUTES")
+                    .ok()
                     .or_else(|| std::env::var("BEARER.TOKEN.VALIDITY.IN.MINUTES").ok()),
             )?
             .set_override(
                 "http_read_header_timeout",
-                std::env::var("HTTP_READ_HEADER_TIMEOUT").ok()
+                std::env::var("HTTP_READ_HEADER_TIMEOUT")
+                    .ok()
                     .or_else(|| std::env::var("HTTP.READ.HEADER.TIMEOUT").ok()),
             )?
             .set_override(
                 "authentication_defend_max_attempts",
-                std::env::var("AUTHENTICATION_DEFEND_MAX_ATTEMPTS").ok()
+                std::env::var("AUTHENTICATION_DEFEND_MAX_ATTEMPTS")
+                    .ok()
                     .or_else(|| std::env::var("AUTHENTICATION.DEFEND.MAX.ATTEMPTS").ok()),
             )?
             .set_override(
                 "authentication_defend_interval_minutes",
-                std::env::var("AUTHENTICATION_DEFEND_INTERVAL_MINUTES").ok()
+                std::env::var("AUTHENTICATION_DEFEND_INTERVAL_MINUTES")
+                    .ok()
                     .or_else(|| std::env::var("AUTHENTICATION.DEFEND.INTERVAL.MINUTES").ok()),
             )?
             .set_override(
                 "authentication_defend_lockout_minutes",
-                std::env::var("AUTHENTICATION_DEFEND_LOCKOUT_MINUTES").ok()
+                std::env::var("AUTHENTICATION_DEFEND_LOCKOUT_MINUTES")
+                    .ok()
                     .or_else(|| std::env::var("AUTHENTICATION.DEFEND.LOCKOUT.MINUTES").ok()),
             )?;
 
         // Build and deserialize
-        let config = config.build()?.try_deserialize()?;
+        let config: Configuration = config.build()?.try_deserialize()?;
 
         // Validate
         config.validate()?;
@@ -315,7 +325,7 @@ impl Configuration {
 
         // Validate base64 API key
         base64::decode(&self.trust_authority_api_key).map_err(|e| {
-            KbsError::Config(format!("Invalid TRUSTAUTHORITY_API_KEY (not base64): {}", e))
+            KbsError::Config(format!("Invalid TRUSTAUTHORITY_API_KEY encoding: {}", e))
         })?;
 
         // Validate admin credentials
@@ -336,7 +346,7 @@ impl Configuration {
             || self.bearer_token_validity_in_minutes > MAX_TOKEN_VALIDITY_MINUTES
         {
             return Err(KbsError::Config(format!(
-                "BEARER_TOKEN_VALIDITY_IN_MINUTES must be between {} and {}",
+                "BEARER_TOKEN_VALIDITY_IN_MINUTES: invalid range {}-{}",
                 MIN_TOKEN_VALIDITY_MINUTES, MAX_TOKEN_VALIDITY_MINUTES
             )));
         }
@@ -382,13 +392,13 @@ fn validate_username(username: &str) -> KbsResult<()> {
 }
 
 fn validate_password(password: &str) -> KbsResult<()> {
-    let regex = regex::Regex::new(r"(?:([a-zA-Z0-9_\\., @!#$%^+=>?:{}()\[\]\"|;~`'*-/]+))")
+    // Remove double quote from pattern - use char class instead
+    let pattern = r#"^[a-zA-Z0-9_\\., @!#$%^+=>?:{}\[\]|;~*-]+$"#;
+    let regex = regex::Regex::new(pattern)
         .map_err(|e| KbsError::Config(format!("Invalid password regex: {}", e)))?;
 
     if password.len() < 8 || password.len() > 64 || !regex.is_match(password) {
-        return Err(KbsError::Config(
-            "Invalid password format. Must be 8-64 characters".into(),
-        ));
+        return Err(KbsError::Config(String::from("Invalid password structure")));
     }
 
     Ok(())

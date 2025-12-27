@@ -6,7 +6,8 @@
 
 //! Repository layer for data persistence.
 
-pub mod directory;
+// TODO: Implement directory-based storage
+// pub mod directory;
 
 use async_trait::async_trait;
 use crate::error::{KbsError, KbsResult, RepositoryError};

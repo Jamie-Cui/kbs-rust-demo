@@ -11,7 +11,6 @@ use axum::{
     response::{IntoResponse, Json, Response},
 };
 use serde::Serialize;
-use std::fmt;
 use thiserror::Error;
 
 /// Main error type for the KBS service.
@@ -130,3 +129,10 @@ impl IntoResponse for KbsError {
 
 /// Result type alias for KBS operations.
 pub type KbsResult<T> = Result<T, KbsError>;
+
+// Implement From for config crate errors
+impl From<config::ConfigError> for KbsError {
+    fn from(err: config::ConfigError) -> Self {
+        KbsError::Config(err.to_string())
+    }
+}
