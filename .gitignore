@@ -1,0 +1,9 @@
+/target
+
+# ide
+.projectile-cache.eld
+.projectile
+
+# llm
+.agent-shell
+CLAUDE.md
