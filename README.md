@@ -424,11 +424,7 @@ src/
 
 ## License
 
-BSD-3-Clause
-
-## Copyright
-
-Copyright (c) 2024 Intel Corporation
+MIT
 
 ## Acknowledgments
 
