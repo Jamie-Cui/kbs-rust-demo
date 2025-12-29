@@ -21,26 +21,25 @@
 // SOFTWARE.
 
 
-use crate::models::attestation::VerifierNonceData;
-use serde::{Deserialize, Serialize};
+use super::*;
 
-/// Response from GetNonce API.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetNonceResponse {
-    /// Signed verifier nonce
-    pub nonce: VerifierNonceData,
-}
+#[test]
+fn test_is_policy_id_matched() {
+    let token_ids = vec![
+        PolicyClaim {
+            id: uuid::Uuid::new_v4(),
+            version: "1.0".to_string(),
+        },
+        PolicyClaim {
+            id: uuid::Uuid::parse_str("123e4567-e89b-12d3-a456-426614174000").unwrap(),
+            version: "1.0".to_string(),
+        },
+    ];
 
-/// Response from GetToken API.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetTokenResponse {
-    /// Attestation token (JWT)
-    pub token: String,
-}
+    let policy_ids = vec![
+        uuid::Uuid::parse_str("123e4567-e89b-12d3-a456-426614174000").unwrap(),
+        uuid::Uuid::new_v4(),
+    ];
 
-/// Response from VerifyToken API.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct VerifyTokenResponse {
-    /// Decoded token claims
-    pub claims: serde_json::Value,
+    assert!(is_policy_id_matched(&token_ids, &policy_ids));
 }
