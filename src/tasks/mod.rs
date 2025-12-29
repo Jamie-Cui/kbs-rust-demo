@@ -20,15 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+//!
+//! Tasks module for startup and maintenance operations.
+//!
+//! This module contains tasks that should be run during service startup
+//! to ensure proper configuration and initialization.
 
-pub mod aes;
-pub mod jwt;
-pub mod rsa;
-pub mod x509;
-pub mod zeroize;
+pub mod tls_cert;
+pub mod jwt_key;
+pub mod admin_user;
 
-pub use aes::*;
-pub use jwt::*;
-pub use rsa::*;
-pub use x509::*;
-pub use zeroize::*;
+pub use tls_cert::*;
+pub use jwt_key::*;
+pub use admin_user::*;

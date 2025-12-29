@@ -42,6 +42,7 @@
 pub mod config;
 pub mod constant;
 pub mod crypto;
+pub mod defender;
 pub mod error;
 pub mod handlers;
 pub mod ita;
@@ -50,12 +51,15 @@ pub mod middleware;
 pub mod models;
 pub mod repositories;
 pub mod services;
+pub mod tasks;
 pub mod traits;
 
 pub use config::Configuration;
+pub use defender::{ClientKey, Defender};
 pub use error::{KbsError, KbsResult};
 pub use ita::{IntelItaClient, MockItaClient, TestItaClient};
 pub use kms::MemoryKeyManager;
+pub use tasks::{admin_user::CreateAdminUser, jwt_key::CreateSigningKey, tls_cert::TlsKeyAndCert};
 
 #[cfg(feature = "vault")]
 pub use kms::VaultKeyManager;

@@ -25,18 +25,22 @@
 
 use gta_kbs::config::Configuration;
 use gta_kbs::constant::*;
+use gta_kbs::defender::Defender;
+use gta_kbs::error::KbsResult;
 use gta_kbs::handlers::AppState;
 use gta_kbs::ita::MockItaClient;
 use gta_kbs::kms::MemoryKeyManager;
 use gta_kbs::repositories::directory::*;
 use gta_kbs::services::*;
+use gta_kbs::tasks::{admin_user::CreateAdminUser, jwt_key::CreateSigningKey, tls_cert::TlsKeyAndCert};
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::signal;
 use tower_http::{
     cors::CorsLayer,
     trace::TraceLayer,
 };
-use tracing::info;
+use tracing::{info, warn};
 use tracing_subscriber::{
     fmt::{self, format::FmtSpan},
     layer::SubscriberExt,
@@ -46,6 +50,10 @@ use tracing_subscriber::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    run().await.map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+}
+
+async fn run() -> gta_kbs::KbsResult<()> {
     // Initialize tracing
     let env_filter = EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| EnvFilter::new("info"));
@@ -65,10 +73,57 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(Configuration::from_env()?);
     info!("Configuration loaded successfully");
 
+    // Initialize JWT signing key (generate if missing)
+    let jwt_key_task = CreateSigningKey::new();
+    match jwt_key_task.generate_if_missing() {
+        Ok(true) => info!("Generated JWT signing key"),
+        Ok(false) => info!("JWT signing key already exists"),
+        Err(e) => {
+            warn!("Failed to generate JWT signing key: {}", e);
+            return Err(e);
+        }
+    }
+
+    // Initialize TLS certificate (generate if missing)
+    let tls_cert_task = TlsKeyAndCert::with_paths(
+        DEFAULT_TLS_CERT_PATH,
+        DEFAULT_TLS_KEY_PATH,
+        &config.san_list.clone().unwrap_or_else(|| DEFAULT_TLS_SAN.to_string()),
+    );
+    match tls_cert_task.generate_if_missing() {
+        Ok(true) => info!("Generated TLS certificate and key"),
+        Ok(false) => info!("TLS certificate and key already exist"),
+        Err(e) => {
+            warn!("Failed to generate TLS certificate: {}", e);
+            // Non-fatal, continue without TLS
+        }
+    }
+
     // Create repositories
     let key_store = Arc::new(FileKeyStore::new(None));
     let policy_store = Arc::new(FileKeyTransferPolicyStore::new(None));
     let user_store = Arc::new(FileUserStore::new(None));
+
+    // Initialize Defender for rate limiting
+    let defender = Arc::new(Defender::from_config(
+        config.authentication_defend_max_attempts,
+        config.authentication_defend_interval_minutes,
+        config.authentication_defend_lockout_minutes,
+    )?);
+    info!("Defender initialized: max_attempts={}, interval={}min, lockout={}min",
+        config.authentication_defend_max_attempts,
+        config.authentication_defend_interval_minutes,
+        config.authentication_defend_lockout_minutes);
+
+    // Spawn background task for periodic defender cleanup
+    let defender_cleanup = defender.clone();
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(Duration::from_secs(300)); // Every 5 minutes
+        loop {
+            interval.tick().await;
+            defender_cleanup.cleanup().await;
+        }
+    });
 
     // Create Key Manager (in-memory implementation for development)
     // For production, replace with a real KMS integration like Vault
@@ -79,6 +134,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // For production, replace with IntelItaClient
     let ita_client = Arc::new(MockItaClient::new());
     info!("Using mock ITA client (for development only)");
+
+    // Create admin user if they don't exist
+    let admin_user_task = CreateAdminUser::new(
+        &config.admin_username,
+        &config.admin_password,
+        user_store.clone(),
+    );
+    match admin_user_task.create_if_missing().await {
+        Ok(true) => info!("Created admin user: {}", config.admin_username),
+        Ok(false) => info!("Admin user already exists: {}", config.admin_username),
+        Err(e) => {
+            warn!("Failed to create admin user: {}", e);
+            return Err(e);
+        }
+    }
 
     // Create services with concrete types
     type KeyStoreType = FileKeyStore;
@@ -130,6 +200,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         key_service,
         key_transfer_policy_service,
         key_transfer_service,
+        defender,
     };
 
     // Create router
@@ -142,6 +213,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
+
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await?;

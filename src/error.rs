@@ -159,6 +159,41 @@ impl From<String> for KbsError {
     }
 }
 
+// Implement From for std::io::Error to allow `?` operator in file operations
+impl From<std::io::Error> for KbsError {
+    fn from(err: std::io::Error) -> Self {
+        KbsError::Internal(format!("IO error: {}", err))
+    }
+}
+
+// Implement From for pkcs8::Error to allow `?` operator in crypto operations
+impl From<pkcs8::Error> for KbsError {
+    fn from(err: pkcs8::Error) -> Self {
+        KbsError::Crypto(format!("PKCS8 error: {}", err))
+    }
+}
+
+// Implement From for rsa::Error to allow `?` operator in crypto operations
+impl From<rsa::Error> for KbsError {
+    fn from(err: rsa::Error) -> Self {
+        KbsError::Crypto(format!("RSA error: {}", err))
+    }
+}
+
+// Implement From for bcrypt::BcryptError to allow `?` operator in password hashing
+impl From<bcrypt::BcryptError> for KbsError {
+    fn from(err: bcrypt::BcryptError) -> Self {
+        KbsError::Crypto(format!("Bcrypt error: {}", err))
+    }
+}
+
+// Implement From for rcgen::RcgenError to allow `?` operator in certificate generation
+impl From<rcgen::RcgenError> for KbsError {
+    fn from(err: rcgen::RcgenError) -> Self {
+        KbsError::Crypto(format!("Certificate generation error: {}", err))
+    }
+}
+
 #[cfg(test)]
 #[path = "error_tests.rs"]
 mod error_tests;

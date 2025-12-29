@@ -80,8 +80,18 @@ url = "2.5"
 # Async traits
 async-trait = "0.1"
 
+# Rate limiting
+governor = { version = "0.6", features = ["std"] }
+
+# Certificate generation
+rcgen = "0.13"
+
+# Secure memory handling
+zeroize = { version = "1.7", features = ["serde", "zeroize_derive"] }
+
 [dev-dependencies]
 tower-test = "0.4"
+tempfile = "3.8"
 
 [features]
 default = []

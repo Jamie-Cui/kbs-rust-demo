@@ -34,6 +34,7 @@ use axum::{
     routing::{get, post},
 };
 use crate::config::Configuration;
+use crate::defender::Defender;
 use crate::services::*;
 
 /// Application state shared by all handlers.
@@ -45,6 +46,7 @@ pub struct AppState {
     pub key_service: Arc<dyn KeyService>,
     pub key_transfer_policy_service: Arc<dyn KeyTransferPolicyService>,
     pub key_transfer_service: Arc<dyn KeyTransferService>,
+    pub defender: Arc<Defender>,
 }
 
 /// Create the HTTP router.

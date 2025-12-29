@@ -26,6 +26,7 @@ use axum::{
     response::{IntoResponse, Response},
     http::StatusCode,
 };
+use crate::defender::ClientKey;
 use crate::error::KbsError;
 use crate::handlers::AppState;
 use crate::models::AuthTokenRequest;
@@ -35,7 +36,30 @@ pub async fn create_auth_token(
     State(state): State<AppState>,
     Json(request): Json<AuthTokenRequest>,
 ) -> Result<Response, KbsError> {
-    let token = state.auth_service.authenticate(request).await?;
+    // Check rate limiting using defender
+    let client_key = ClientKey::username(&request.username);
+
+    // Check if user is currently banned
+    if state.defender.is_banned(&client_key).await {
+        return Err(KbsError::Authorization(
+            "Too many failed authentication attempts. Please try again later.".into(),
+        ));
+    }
+
+    // Increment attempt counter
+    let just_banned = state.defender.inc(client_key.clone()).await;
+
+    if just_banned {
+        return Err(KbsError::Authorization(
+            "Too many failed authentication attempts. Account temporarily locked.".into(),
+        ));
+    }
+
+    // Attempt authentication
+    let token = state.auth_service.authenticate(request.clone()).await?;
+
+    // On successful auth, remove from rate limiting
+    state.defender.remove_client(&client_key).await;
 
     // Return the token as plain text
     Ok((StatusCode::OK, token).into_response())

@@ -49,10 +49,43 @@ pub const MAX_TOKEN_VALIDITY_MINUTES: i64 = 30;
 pub const DEFAULT_AUTH_DEFEND_MAX_ATTEMPTS: u32 = 5;
 
 /// Default authentication defend interval (minutes)
-pub const DEFAULT_AUTH_DEFEND_INTERVAL_MINUTES: u64 = 1;
+pub const DEFAULT_AUTH_DEFEND_INTERVAL_MINUTES: u64 = 5;
 
 /// Default authentication defend lockout (minutes)
-pub const DEFAULT_AUTH_DEFEND_LOCKOUT_MINUTES: u64 = 1;
+pub const DEFAULT_AUTH_DEFEND_LOCKOUT_MINUTES: u64 = 15;
+
+/// Config directory
+pub const CONFIG_DIR: &str = "/etc/kbs";
+
+/// TLS certs directory
+pub const TLS_CERTS_PATH: &str = "/etc/kbs/certs/tls/";
+
+/// JWT signing certs directory
+pub const JWT_SIGNING_CERTS_PATH: &str = "/etc/kbs/certs/signing-keys/";
+
+/// Default TLS cert path
+pub const DEFAULT_TLS_CERT_PATH: &str = "/etc/kbs/certs/tls/tls.crt";
+
+/// Default TLS key path
+pub const DEFAULT_TLS_KEY_PATH: &str = "/etc/kbs/certs/tls/tls.key";
+
+/// Default JWT signing key path
+pub const DEFAULT_JWT_SIGNING_KEY_PATH: &str = "/etc/kbs/certs/signing-keys/jwt-signing.key";
+
+/// TLS certificate validity (days)
+pub const TLS_VALIDITY_DAYS: u32 = 365;
+
+/// TLS certificate common name
+pub const TLS_COMMON_NAME: &str = "KBS TLS Certificate";
+
+/// TLS certificate issuer
+pub const TLS_ISSUER: &str = "Intel";
+
+/// Default TLS SAN list
+pub const DEFAULT_TLS_SAN: &str = "127.0.0.1,localhost";
+
+/// Default RSA key length (bits)
+pub const DEFAULT_KEY_LENGTH: u32 = 3072;
 
 /// Base directory for KBS data
 pub const HOME_DIR: &str = "/opt/kbs";
@@ -65,15 +98,6 @@ pub const KEYS_TRANSFER_POLICY_DIR: &str = "/keys-transfer-policy";
 
 /// Directory for users
 pub const USER_DIR: &str = "/users";
-
-/// Default TLS cert path
-pub const DEFAULT_TLS_CERT_PATH: &str = "/etc/kbs/certs/tls/server.pem";
-
-/// Default TLS key path
-pub const DEFAULT_TLS_KEY_PATH: &str = "/etc/kbs/certs/tls/server-key.pem";
-
-/// Default JWT signing key path
-pub const DEFAULT_JWT_SIGNING_KEY_PATH: &str = "/etc/kbs/certs/signing-keys/jwt-signing-key.pem";
 
 /// TCB status up-to-date
 pub const TCB_STATUS_UP_TO_DATE: &str = "UpToDate";
