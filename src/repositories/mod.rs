@@ -6,11 +6,10 @@
 
 //! Repository layer for data persistence.
 
-// TODO: Implement directory-based storage
-// pub mod directory;
+pub mod directory;
 
 use async_trait::async_trait;
-use crate::error::{KbsError, KbsResult, RepositoryError};
+use crate::error::KbsResult;
 use crate::models::*;
 use uuid::Uuid;
 

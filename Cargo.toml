@@ -30,9 +30,11 @@ tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
 
 # Crypto
 aes-gcm = "0.10"
-rsa = "0.9"
+rsa = { version = "0.9", features = ["sha2"] }
 sha2 = "0.10"
 bcrypt = "0.15"
+rand = "0.8"
+arrayref = "0.3"
 
 # JWT
 jsonwebtoken = "9.2"
@@ -58,6 +60,7 @@ dotenvy = "0.15"
 
 # PEM encoding
 pem = "3.0"
+pkcs8 = "0.10"
 
 # Derive macros
 derive_builder = "0.20"
@@ -79,3 +82,7 @@ async-trait = "0.1"
 
 [dev-dependencies]
 tower-test = "0.4"
+
+[features]
+default = []
+vault = []  # Enable Vault Key Manager implementation

@@ -54,7 +54,7 @@
 //! ```
 
 use async_trait::async_trait;
-use crate::error::{KbsError, KbsResult};
+use crate::error::KbsResult;
 use crate::models::attestation::VerifierNonce;
 use serde_json::Value;
 

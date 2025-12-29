@@ -45,7 +45,7 @@
 //! ```
 
 use async_trait::async_trait;
-use crate::error::{KbsError, KbsResult};
+use crate::error::KbsResult;
 use crate::models::{KeyInfo, KeyRequest};
 
 /// Key Manager trait for KMS operations.

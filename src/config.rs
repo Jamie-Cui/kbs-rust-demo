@@ -324,7 +324,8 @@ impl Configuration {
         }
 
         // Validate base64 API key
-        base64::decode(&self.trust_authority_api_key).map_err(|e| {
+        use base64::Engine as _;
+        base64::engine::general_purpose::STANDARD.decode(&self.trust_authority_api_key).map_err(|e| {
             KbsError::Config(format!("Invalid TRUSTAUTHORITY_API_KEY encoding: {}", e))
         })?;
 

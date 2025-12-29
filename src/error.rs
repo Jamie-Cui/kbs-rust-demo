@@ -136,3 +136,10 @@ impl From<config::ConfigError> for KbsError {
         KbsError::Config(err.to_string())
     }
 }
+
+// Implement From for String to allow `?` operator with String errors
+impl From<String> for KbsError {
+    fn from(err: String) -> Self {
+        KbsError::Validation(err)
+    }
+}
