@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Key transfer policy-related models.
 
 use crate::models::attestation::AttesterType;
 use serde::{Deserialize, Serialize};

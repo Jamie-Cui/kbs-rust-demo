@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Configuration management for the KBS service.
 
 use crate::{
     constant::{

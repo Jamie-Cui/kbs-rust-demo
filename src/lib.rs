@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Intel Trust Authority Key Broker Service (KBS) - Rust implementation
 //!
 //! This is a Rust rewrite of the Intel Trust Authority Key Broker Service.
 //! It acts as a relying party in remote attestation architectures, brokering

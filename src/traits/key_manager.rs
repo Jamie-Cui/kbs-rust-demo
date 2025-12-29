@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Key Manager trait.
 //!
 //! This trait defines the interface for key management operations.
 //! You need to implement this for your KMS backend (Vault, KMIP, etc.).

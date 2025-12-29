@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Policy validation logic.
 
 use crate::constant::TCB_STATUS_UP_TO_DATE;
 use crate::error::{KbsError, KbsResult};

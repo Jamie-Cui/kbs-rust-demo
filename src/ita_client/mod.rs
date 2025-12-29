@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Intel Trust Authority Client implementation.
 //!
 //! This module provides a Rust implementation of the Intel Trust Authority API client.
 

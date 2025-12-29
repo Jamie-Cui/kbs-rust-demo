@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! ITA API request types.
 
 use crate::models::attestation::VerifierNonceRequest;
 use serde::{Deserialize, Serialize};

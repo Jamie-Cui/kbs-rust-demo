@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! AES-GCM encryption utilities.
 
 use aes_gcm::{
     aead::{Aead, AeadCore, KeyInit, OsRng},

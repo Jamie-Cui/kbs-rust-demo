@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Key Manager implementations.
 //!
 //! This module provides concrete implementations of the KeyManager trait
 //! for various KMS backends.

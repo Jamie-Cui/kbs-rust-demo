@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Directory-based repository implementation.
 
 use async_trait::async_trait;
 use std::path::PathBuf;

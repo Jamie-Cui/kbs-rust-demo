@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Intel Trust Authority Key Broker Service (KBS)
 //!
 //! Main entry point for the KBS service.
 

@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Intel Trust Authority Client trait.
 //!
 //! This trait defines the interface for communicating with the Intel Trust Authority service.
 //! You need to implement this to interact with the ITA API.

@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Intel Trust Authority Client implementations.
 //!
 //! This module provides concrete implementations of the ItaClient trait
 //! for communicating with the Intel Trust Authority service.

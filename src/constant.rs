@@ -1,10 +1,3 @@
-/*
- *   Copyright (c) 2024 Intel Corporation
- *   All rights reserved.
- *   SPDX-License-Identifier: BSD-3-Clause
- */
-
-//! Constants for the KBS service.
 
 /// Service name
 pub const SERVICE_NAME: &str = "kbs";
